@@ -1,10 +1,11 @@
 import { useQuery } from 'react-query';
+import { Listings } from './types/listings';
 
 const apiKey = import.meta.env.VITE_APIKEY as string;
 const url = `https://spanishinquisition.victorianplumbing.co.uk/interviews/listings?apikey=${apiKey}`;
 const page_slug = 'toilets';
 
-const fetchListings = async () => {
+const fetchListings = async (): Promise<Listings> => {
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -20,18 +21,31 @@ const fetchListings = async () => {
   });
 
   if (!response.ok) {
-    console.log(response.status);
-    throw new Error('response failed');
+    throw response;
   }
 
   return response.json();
 };
 
 function App() {
-  const { data, isLoading, error } = useQuery('listings', fetchListings);
+  const { data, isLoading, error, refetch } = useQuery<Listings, Response>(
+    'listings',
+    fetchListings,
+    {
+      retry: false,
+    }
+  );
 
-  if (isLoading) return <div>loading</div>;
-  if (error) return <div>error: {JSON.stringify(error)}</div>;
+  if (isLoading) return <div>Loading...</div>;
+
+  if (error) {
+    return (
+      <div>
+        Error: {error.statusText} code: {error.status}
+        <button onClick={() => refetch()}>Retry</button>
+      </div>
+    );
+  }
 
   return <div>{JSON.stringify(data)}</div>;
 }

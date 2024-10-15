@@ -1,35 +1,39 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useQuery } from 'react-query';
+
+const apiKey = import.meta.env.VITE_APIKEY as string;
+const url = `https://spanishinquisition.victorianplumbing.co.uk/interviews/listings?apikey=${apiKey}`;
+const page_slug = 'toilets';
+
+const fetchListings = async () => {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: page_slug,
+      pageNumber: 0,
+      size: 0,
+      additionalPages: 0,
+      sort: 1,
+    }),
+  });
+
+  if (!response.ok) {
+    console.log(response.status);
+    throw new Error('response failed');
+  }
+
+  return response.json();
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { data, isLoading, error } = useQuery('listings', fetchListings);
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+  if (isLoading) return <div>loading</div>;
+  if (error) return <div>error: {JSON.stringify(error)}</div>;
+
+  return <div>{JSON.stringify(data)}</div>;
 }
 
-export default App
+export default App;

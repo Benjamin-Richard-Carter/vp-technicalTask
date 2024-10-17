@@ -6,7 +6,7 @@ import { ProductCard } from './components/product';
 import { FacetCard } from './components/facet';
 import { useFacetParams } from './hooks/useFacetParams';
 import { useInView } from 'react-intersection-observer';
-import { useLocation } from 'react-router-dom'; // Import from react-router
+import { useLocation } from 'react-router-dom';
 import { LayoutGroup } from 'framer-motion';
 
 const apiKey = import.meta.env.VITE_APIKEY;
@@ -44,6 +44,7 @@ function App() {
         const nextFrom = lastPage.pagination.from + lastPage.pagination.size;
         return nextFrom < lastPage.pagination.total ? pages.length : undefined;
       },
+
       keepPreviousData: true,
     }
   );
@@ -73,7 +74,7 @@ function App() {
   }
 
   return (
-    <div className="bg-black min-h-screen">
+    <div className="bg-slate-200 min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row">
           {facets.length > 0 && (

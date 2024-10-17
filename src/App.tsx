@@ -2,7 +2,8 @@ import { useQuery } from 'react-query';
 import { Listings } from './types/listings';
 import { fetchListings } from './api/fetchListings';
 import { ProductCard } from './components/product';
-import { Sidebar } from './components/sidebar';
+import { FacetCard } from './components/facet';
+import { useFacetParams } from './hooks/useFacetParams';
 
 function App() {
   const apiKey = import.meta.env.VITE_APIKEY;
@@ -24,8 +25,12 @@ function App() {
     { retry: false }
   );
 
-  const products = data?.products;
-  const facets = data?.facets;
+  const facets = data?.facets || [];
+
+  const { updateParams, clearParams, getFacetValues, getAllFacetValues } =
+    useFacetParams(facets);
+
+  const getAllValues = getAllFacetValues();
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -42,14 +47,25 @@ function App() {
     <div className="bg-black min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row">
-          {facets && (
+          {data?.facets && (
             <div className="w-full md:w-64 flex-shrink-0 mb-8 md:mb-0 md:mr-8">
-              <Sidebar facets={facets} />
+              <div className="flex flex-col gap-3 w-full">
+                {data.facets?.map((facet) => (
+                  <FacetCard
+                    key={facet.displayName}
+                    facet={facet}
+                    updateParams={updateParams}
+                    clearParams={clearParams}
+                    getFacetValues={getFacetValues}
+                  />
+                ))}
+              </div>
             </div>
           )}
           <div className="flex-grow">
+            <div className="bg-red-500">{JSON.stringify(getAllValues)}</div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {products?.map((product) => (
+              {data?.products?.map((product) => (
                 <ProductCard
                   key={product.id}
                   details={product}

@@ -14,11 +14,13 @@ export type Facet = {
 
 export type FacetOption = {
   identifier: string;
-  value: boolean | ValueRange | string;
   displayValue: string;
   productCount: number;
   priority: number;
+  value: FacetValue;
 };
+
+export type FacetValue = boolean | ValueRange | string;
 
 export type ValueRange = {
   gte: number;

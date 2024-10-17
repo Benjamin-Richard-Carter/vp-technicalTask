@@ -7,6 +7,7 @@ import { FacetCard } from './components/facet';
 import { useFacetParams } from './hooks/useFacetParams';
 import { useInView } from 'react-intersection-observer';
 import { useLocation } from 'react-router-dom'; // Import from react-router
+import { LayoutGroup } from 'framer-motion';
 
 const apiKey = import.meta.env.VITE_APIKEY;
 const url = `https://spanishinquisition.victorianplumbing.co.uk/interviews/listings?apikey=${apiKey}`;
@@ -76,17 +77,19 @@ function App() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row">
           {facets.length > 0 && (
-            <div className="w-full md:w-64 flex-shrink-0 mb-8 md:mb-0 md:mr-8">
+            <div className="w-full md:w-72 flex-shrink-0 mb-8 md:mb-0 md:mr-8">
               <div className="flex flex-col gap-3 w-full">
-                {facets.map((facet) => (
-                  <FacetCard
-                    key={facet.identifier}
-                    facet={facet}
-                    updateParams={updateParams}
-                    clearParams={clearParams}
-                    getFacetValues={getFacetValues}
-                  />
-                ))}
+                <LayoutGroup>
+                  {facets.map((facet) => (
+                    <FacetCard
+                      key={facet.identifier}
+                      facet={facet}
+                      updateParams={updateParams}
+                      clearParams={clearParams}
+                      getFacetValues={getFacetValues}
+                    />
+                  ))}
+                </LayoutGroup>
               </div>
             </div>
           )}

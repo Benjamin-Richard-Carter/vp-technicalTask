@@ -1,6 +1,7 @@
 import { DelimitedArrayParam, useQueryParams } from 'use-query-params';
 import { Facet, FacetValue } from '../types/listings';
 import { valueRangeSchema } from '../schemas/facets';
+import { queryParams } from '../api/fetchListings';
 
 export const useFacetParams = (facets: Facet[]) => {
   const identifiers = facets.map((facet) => facet.identifier);
@@ -49,13 +50,33 @@ export const useFacetParams = (facets: Facet[]) => {
   const getFacetValues = (identifier: string): (FacetValue | null)[] =>
     query[identifier]?.map(decodeFacet) ?? [];
 
-  const getAllFacetValues = () =>
-    Object.fromEntries(
-      Object.entries(query).map(([key, value]) => [
-        key,
-        value?.map(decodeFacet),
-      ])
+  const getAllFacetValues = (): queryParams['facets'] => {
+    const activeCategories = Object.entries(query).filter(
+      ([, value]) => value !== undefined
     );
+
+    const activeKeys = activeCategories.map(([key]) => key);
+    const activeValues = activeKeys.map((item) => {
+      const facet = facets.find((facet) => facet.identifier === item);
+
+      if (!facet) return null;
+
+      const decodedValues = query[item]
+        ?.map(decodeFacet)
+        .filter((v) => v !== null);
+
+      if (!decodedValues) return null;
+
+      return {
+        [facet.identifier]: decodedValues.map((v) => ({
+          identifier: facet.identifier,
+          value: v,
+        })),
+      };
+    });
+
+    return Object.assign({}, ...activeValues);
+  };
 
   const clearAllFacetValues = () => {
     setQuery({});

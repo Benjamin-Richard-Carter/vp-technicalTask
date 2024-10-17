@@ -1,38 +1,66 @@
-import { useQuery } from 'react-query';
+import { useEffect, useState } from 'react';
+import { useInfiniteQuery } from 'react-query';
 import { Listings } from './types/listings';
-import { fetchListings } from './api/fetchListings';
+import { fetchListings, queryParams } from './api/fetchListings';
 import { ProductCard } from './components/product';
 import { FacetCard } from './components/facet';
 import { useFacetParams } from './hooks/useFacetParams';
+import { useInView } from 'react-intersection-observer';
+import { useLocation } from 'react-router-dom'; // Import from react-router
+
+const apiKey = import.meta.env.VITE_APIKEY;
+const url = `https://spanishinquisition.victorianplumbing.co.uk/interviews/listings?apikey=${apiKey}`;
 
 function App() {
-  const apiKey = import.meta.env.VITE_APIKEY;
-  const url = `https://spanishinquisition.victorianplumbing.co.uk/interviews/listings?apikey=${apiKey}`;
-  const page_slug = 'toilets';
+  const { ref, inView } = useInView();
+
+  const [pageSlug, setPageSlug] = useState('toilets');
+  const [size, setSize] = useState(50);
+  const [sort, setSort] = useState(1);
+  const [appliedFacets, setAppliedFacets] = useState<queryParams['facets']>();
+  const location = useLocation(); // Monitor URI changes
 
   const queryParams = {
-    url,
-    page_slug,
-    size: 50,
-    sort: 1,
-    pageNumber: 0,
-    additionalPages: 0,
+    page_slug: pageSlug,
+    size,
+    sort,
+    facets: appliedFacets,
   };
 
-  const { data, isLoading, error, refetch } = useQuery<Listings, Error>(
-    JSON.stringify(queryParams),
-    () => fetchListings(queryParams),
-    { retry: false }
+  const {
+    data,
+    isFetchingNextPage,
+    hasNextPage,
+    error,
+    refetch,
+    fetchNextPage,
+  } = useInfiniteQuery<Listings, Error>(
+    ['listings', queryParams],
+    ({ pageParam = 0 }) =>
+      fetchListings(url, { ...queryParams, pageNumber: pageParam }),
+    {
+      getNextPageParam: (lastPage, pages) => {
+        const nextFrom = lastPage.pagination.from + lastPage.pagination.size;
+        return nextFrom < lastPage.pagination.total ? pages.length : undefined;
+      },
+      keepPreviousData: true,
+    }
   );
 
-  const facets = data?.facets || [];
+  useEffect(() => {
+    setAppliedFacets(getAllFacetValues());
+  }, [location]);
+
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, fetchNextPage, hasNextPage]);
+
+  const facets = data?.pages[0]?.facets || [];
 
   const { updateParams, clearParams, getFacetValues, getAllFacetValues } =
     useFacetParams(facets);
-
-  const getAllValues = getAllFacetValues();
-
-  if (isLoading) return <div>Loading...</div>;
 
   if (error) {
     return (
@@ -47,12 +75,12 @@ function App() {
     <div className="bg-black min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row">
-          {data?.facets && (
+          {facets.length > 0 && (
             <div className="w-full md:w-64 flex-shrink-0 mb-8 md:mb-0 md:mr-8">
               <div className="flex flex-col gap-3 w-full">
-                {data.facets?.map((facet) => (
+                {facets.map((facet) => (
                   <FacetCard
-                    key={facet.displayName}
+                    key={facet.identifier}
                     facet={facet}
                     updateParams={updateParams}
                     clearParams={clearParams}
@@ -63,14 +91,20 @@ function App() {
             </div>
           )}
           <div className="flex-grow">
-            <div className="bg-red-500">{JSON.stringify(getAllValues)}</div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {data?.products?.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  details={product}
-                />
-              ))}
+              {data?.pages.flatMap((page, pageIndex) =>
+                page.products.map((product) => (
+                  <ProductCard
+                    key={`${pageIndex}-${product.id}`}
+                    details={product}
+                  />
+                ))
+              )}
+            </div>
+            <div
+              ref={ref}
+              className="mt-4 text-center text-white">
+              {isFetchingNextPage && 'loading'}
             </div>
           </div>
         </div>

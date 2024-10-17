@@ -18,6 +18,7 @@ export const FacetCard = ({
   updateParams,
 }: FacetCardProps) => {
   const { identifier, displayName, options } = facet;
+
   const facetValues = getFacetValues(identifier);
   const optionValues = options.map((option) => option.value);
   const isValueRange = valueRangeArraySchema.safeParse(optionValues).success;

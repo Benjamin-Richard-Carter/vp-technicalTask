@@ -47,8 +47,8 @@ export const ProductCard = ({ details }: { details: Product }) => {
         )}
       </div>
 
-      <div className="w-full flex flex-row items-end justify-between gap-2">
-        <div className="bg-gray-100 truncate text-md flex font-bold flex-row p-1 px-2 rounded-3xl justify-between items-center gap-2">
+      <div className="w-full flex flex-row items-end justify-between flex-wrap">
+        <div className="text-md flex font-bold flex-row p-1 px-2 rounded-3xl justify-between items-center gap-2">
           {inStock ? (
             <span className="flex flex-row items-center justify-center gap-3">
               <span className="text-green-500 text-2xl">
@@ -57,7 +57,7 @@ export const ProductCard = ({ details }: { details: Product }) => {
               In stock
             </span>
           ) : (
-            <span className="flex flex-row items-center justify-center gap-3">
+            <span className="flex flex-row items-center justify-center gap-2">
               <span className="text-red-500 text-2xl">
                 <TbX />
               </span>
@@ -67,13 +67,15 @@ export const ProductCard = ({ details }: { details: Product }) => {
         </div>
 
         {details.averageRating && details.reviewsCount && (
-          <div className="text-md flex flex-row bg-gray-100 p-1 px-2 rounded-3xl justify-between items-center gap-2">
+          <div className="text-md flex flex-row p-1 px-2 rounded-3xl items-center gap-2">
             <span className="text-yellow-400 text-2xl ">
               <TbStarFilled />
             </span>
 
             <div className="w-full flex justify-between">
-              <span className="font-bold pr-2">{details.averageRating}</span>
+              <span className="font-bold pr-2">
+                {details.averageRating} stars
+              </span>
               <span className="font-bold">({details.reviewsCount})</span>
             </div>
           </div>

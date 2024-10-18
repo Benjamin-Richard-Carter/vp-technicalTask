@@ -69,7 +69,7 @@ export const useFacetParams = (facets: Facet[]) => {
 
       return {
         [facet.identifier]: decodedValues.map((v) => ({
-          identifier: facet.identifier,
+          identifier: facet.options.find((o) => o.value === v)?.identifier,
           value: v,
         })),
       };

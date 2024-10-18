@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery, useQueryClient } from 'react-query';
 import { Listings } from './types/listings';
 import { fetchListings, queryParams } from './api/fetchListings';
 import { ProductCard } from './components/product';
@@ -8,6 +8,8 @@ import { useFacetParams } from './hooks/useFacetParams';
 import { useInView } from 'react-intersection-observer';
 import { useLocation } from 'react-router-dom';
 import { LayoutGroup } from 'framer-motion';
+import { SortOptions } from './components/options';
+import { NumberParam, useQueryParams, withDefault } from 'use-query-params';
 
 const apiKey = import.meta.env.VITE_APIKEY;
 const url = `https://spanishinquisition.victorianplumbing.co.uk/interviews/listings?apikey=${apiKey}`;
@@ -15,16 +17,22 @@ const url = `https://spanishinquisition.victorianplumbing.co.uk/interviews/listi
 function App() {
   const { ref, inView } = useInView();
 
-  const [pageSlug, setPageSlug] = useState('toilets');
-  const [size, setSize] = useState(50);
-  const [sort, setSort] = useState(1);
+  const pageSlug = 'toilets';
+  const size: number = 10;
   const [appliedFacets, setAppliedFacets] = useState<queryParams['facets']>();
-  const location = useLocation(); // Monitor URI changes
+  const location = useLocation();
+  const queryClient = useQueryClient();
+  const sortByParam = withDefault(NumberParam, 1);
+  const [sort, setSort] = useQueryParams({ sort: sortByParam });
+
+  const handleSetSort = (sort: number) => {
+    setSort({ sort });
+  };
 
   const queryParams = {
     page_slug: pageSlug,
     size,
-    sort,
+    sort: sort.sort,
     facets: appliedFacets,
   };
 
@@ -44,14 +52,26 @@ function App() {
         const nextFrom = lastPage.pagination.from + lastPage.pagination.size;
         return nextFrom < lastPage.pagination.total ? pages.length : undefined;
       },
-
       keepPreviousData: true,
     }
   );
 
+  const resetPageCount = () => {
+    queryClient.setQueryData(['listings', queryParams], (oldData: any) => {
+      if (oldData && oldData.pages && oldData.pages.length > 0) {
+        return {
+          pages: [oldData.pages[0]],
+          pageParams: [oldData.pageParams[0]],
+        };
+      }
+      return oldData;
+    });
+  };
+
   useEffect(() => {
     setAppliedFacets(getAllFacetValues());
-  }, [location]);
+    resetPageCount();
+  }, [location, sort]);
 
   useEffect(() => {
     if (inView && hasNextPage) {
@@ -61,8 +81,13 @@ function App() {
 
   const facets = data?.pages[0]?.facets || [];
 
-  const { updateParams, clearParams, getFacetValues, getAllFacetValues } =
-    useFacetParams(facets);
+  const {
+    updateParams,
+    clearParams,
+    getFacetValues,
+    getAllFacetValues,
+    clearAllFacetValues,
+  } = useFacetParams(facets);
 
   if (error) {
     return (
@@ -78,9 +103,13 @@ function App() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row">
           {facets.length > 0 && (
-            <div className="w-full md:w-72 flex-shrink-0 mb-8 md:mb-0 md:mr-8">
+            <div className="w-full md:w-72 flex-shrink-0 mb-8 md:mb-0 md:mr-8 ">
               <div className="flex flex-col gap-3 w-full">
                 <LayoutGroup>
+                  <SortOptions
+                    setSort={handleSetSort}
+                    currentSort={sort.sort}
+                  />
                   {facets.map((facet) => (
                     <FacetCard
                       key={facet.identifier}

@@ -1,16 +1,14 @@
 import { motion } from 'framer-motion';
 import { TbArrowDown, TbArrowUp, TbSparkles } from 'react-icons/tb';
 import { MdOutlineDiscount } from 'react-icons/md';
+import { UseFacetParamsReturn } from '../types/query';
 
 type OptionsProps = {
   setSort: (sort: number) => void;
   currentSort: number;
 };
 
-export const SortOptions: React.FC<OptionsProps> = ({
-  setSort,
-  currentSort,
-}) => {
+export const SortOptions = ({ setSort, currentSort }: OptionsProps) => {
   type SortType = {
     name: string;
     value: number;
@@ -24,16 +22,12 @@ export const SortOptions: React.FC<OptionsProps> = ({
     { name: 'Discount', value: 4, icon: <MdOutlineDiscount /> },
   ];
 
-  const handleSort = (sort: (typeof sortTypes)[0]) => {
-    setSort(sort.value);
-  };
-
   return (
     <motion.div className="p-3 bg-white rounded-2xl">
       {sortTypes.map((sort) => (
         <motion.button
           key={sort.value}
-          onClick={() => handleSort(sort)}
+          onClick={() => setSort(sort.value)}
           className="w-full p-2 text-left flex items-center gap-3">
           <span className="text-2xl relative p-1">
             {sort.value === currentSort && (
@@ -51,4 +45,42 @@ export const SortOptions: React.FC<OptionsProps> = ({
       ))}
     </motion.div>
   );
+};
+
+type AppliedProps = {
+  clearParams: UseFacetParamsReturn['clearParams'];
+  getAllValues: UseFacetParamsReturn['getQueryValues'];
+};
+
+export const AppliedFacets = ({ clearParams, getAllValues }: AppliedProps) => {
+  return (
+    <div className="bg-red-500">
+      <h1 className="pb-5">DEBUG</h1>
+      {JSON.stringify(getAllValues())}
+    </div>
+  );
+
+  // return (
+  //   <motion.div className="p-3 bg-white rounded-2xl">
+  //     {sortTypes.map((sort) => (
+  //       <motion.button
+  //         key={sort.value}
+  //         onClick={() => handleSort(sort)}
+  //         className="w-full p-2 text-left flex items-center gap-3">
+  //         <span className="text-2xl relative p-1">
+  //           {sort.value === currentSort && (
+  //             <motion.div
+  //               className="absolute inset-0 rounded-full bg-blue-100"
+  //               style={{ transform: 'scale(1.5)', zIndex: 0 }}
+  //               transition={{ duration: 0.15 }}
+  //               key="overlay"
+  //             />
+  //           )}
+  //           <span style={{ position: 'relative', zIndex: 1 }}>{sort.icon}</span>
+  //         </span>
+  //         <span className="ml-2 text-lg font-semibold">{sort.name}</span>
+  //       </motion.button>
+  //     ))}
+  //   </motion.div>
+  // );
 };

@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import { useFacetParams } from '../hooks/useFacetParams';
 import { valueRangeSchema, valueRangeArraySchema } from '../schemas/facets';
 import { Facet, FacetValue } from '../types/listings';
 import { LayoutGroup, motion } from 'framer-motion';
 import { TbArrowDown, TbArrowUp, TbX } from 'react-icons/tb';
-
-type UseFacetParamsReturn = ReturnType<typeof useFacetParams>;
+import { UseFacetParamsReturn } from '../types/query';
 
 type FacetCardProps = {
   facet: Facet;
@@ -52,7 +50,6 @@ export const FacetCard = ({
     if (!facetValues) {
       return false;
     }
-
     return facetValues.length > 0;
   };
 

@@ -8,31 +8,24 @@ import { useFacetParams } from './hooks/useFacetParams';
 import { useInView } from 'react-intersection-observer';
 import { useLocation } from 'react-router-dom';
 import { LayoutGroup } from 'framer-motion';
-import { SortOptions } from './components/options';
-import { NumberParam, useQueryParams, withDefault } from 'use-query-params';
+import { AppliedFacets, SortOptions } from './components/options';
 
 const apiKey = import.meta.env.VITE_APIKEY;
 const url = `https://spanishinquisition.victorianplumbing.co.uk/interviews/listings?apikey=${apiKey}`;
 
 function App() {
   const { ref, inView } = useInView();
-
   const pageSlug = 'toilets';
   const size: number = 10;
   const [appliedFacets, setAppliedFacets] = useState<queryParams['facets']>();
   const location = useLocation();
   const queryClient = useQueryClient();
-  const sortByParam = withDefault(NumberParam, 1);
-  const [sort, setSort] = useQueryParams({ sort: sortByParam });
-
-  const handleSetSort = (sort: number) => {
-    setSort({ sort });
-  };
+  const [sort, setSort] = useState<number>(1);
 
   const queryParams = {
     page_slug: pageSlug,
     size,
-    sort: sort.sort,
+    sort: sort,
     facets: appliedFacets,
   };
 
@@ -69,9 +62,9 @@ function App() {
   };
 
   useEffect(() => {
-    setAppliedFacets(getAllFacetValues());
+    setAppliedFacets(getQueryValues());
     resetPageCount();
-  }, [location, sort]);
+  }, [location]);
 
   useEffect(() => {
     if (inView && hasNextPage) {
@@ -85,7 +78,7 @@ function App() {
     updateParams,
     clearParams,
     getFacetValues,
-    getAllFacetValues,
+    getQueryValues,
     clearAllFacetValues,
   } = useFacetParams(facets);
 
@@ -106,9 +99,13 @@ function App() {
             <div className="w-full md:w-72 flex-shrink-0 mb-8 md:mb-0 md:mr-8 ">
               <div className="flex flex-col gap-3 w-full">
                 <LayoutGroup>
+                  <AppliedFacets
+                    clearParams={clearParams}
+                    getAllValues={getQueryValues}
+                  />
                   <SortOptions
-                    setSort={handleSetSort}
-                    currentSort={sort.sort}
+                    setSort={setSort}
+                    currentSort={sort}
                   />
                   {facets.map((facet) => (
                     <FacetCard

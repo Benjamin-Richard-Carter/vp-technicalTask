@@ -1,3 +1,4 @@
+import { useFacetParams } from '../hooks/useFacetParams';
 import { Facet } from './listings';
 
 export type queryParams = {
@@ -8,3 +9,5 @@ export type queryParams = {
   additionalPages?: number;
   facets?: Facet[];
 };
+
+export type UseFacetParamsReturn = ReturnType<typeof useFacetParams>;

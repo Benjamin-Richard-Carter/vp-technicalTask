@@ -50,7 +50,7 @@ export const useFacetParams = (facets: Facet[]) => {
   const getFacetValues = (identifier: string): (FacetValue | null)[] =>
     query[identifier]?.map(decodeFacet) ?? [];
 
-  const getAllFacetValues = (): queryParams['facets'] => {
+  const getQueryValues = (): queryParams['facets'] => {
     const activeCategories = Object.entries(query).filter(
       ([, value]) => value !== undefined
     );
@@ -69,7 +69,9 @@ export const useFacetParams = (facets: Facet[]) => {
 
       return {
         [facet.identifier]: decodedValues.map((v) => ({
-          identifier: facet.options.find((o) => o.value === v)?.identifier,
+          identifier: facet.options.find(
+            (o) => JSON.stringify(o.value) === JSON.stringify(v)
+          )?.identifier,
           value: v,
         })),
       };
@@ -86,7 +88,7 @@ export const useFacetParams = (facets: Facet[]) => {
     updateParams,
     clearParams,
     getFacetValues,
-    getAllFacetValues,
+    getQueryValues,
     clearAllFacetValues,
   };
 };

@@ -14,7 +14,9 @@ import { ErrorDialog } from './components/error';
 
 function App() {
   const { ref, inView } = useInView();
+
   const [appliedFacets, setAppliedFacets] = useState<queryParams['facets']>();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const [sort, setSort] = useState<number>(1);
   const { apiKey } = useParams();
@@ -63,6 +65,11 @@ function App() {
   };
 
   useEffect(() => {
+    setAppliedFacets(getQueryValues());
+    resetPageCount();
+  }, [location]);
+
+  useEffect(() => {
     if (inView && hasNextPage) {
       fetchNextPage();
     }
@@ -78,15 +85,7 @@ function App() {
     getQueryValues,
     clearAllFacetValues,
     getAllFacetValues,
-    query,
   } = useFacetParams(facets);
-
-  useEffect(() => {
-    const currentlyApplied = getQueryValues();
-    console.log(currentlyApplied);
-    setAppliedFacets(currentlyApplied);
-    resetPageCount();
-  }, [query]);
 
   if (error) {
     return (

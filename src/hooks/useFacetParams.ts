@@ -109,7 +109,6 @@ export const useFacetParams = (facets: Facet[]) => {
     getQueryValues,
     clearAllFacetValues,
     getAllFacetValues,
-    query,
   };
 };
 

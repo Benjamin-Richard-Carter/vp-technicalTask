@@ -99,10 +99,6 @@ function App() {
             <div className="w-full md:w-72 flex-shrink-0 mb-8 md:mb-0 md:mr-8 ">
               <div className="flex flex-col gap-3 w-full">
                 <LayoutGroup>
-                  <AppliedFacets
-                    clearParams={clearParams}
-                    getAllValues={getQueryValues}
-                  />
                   <SortOptions
                     setSort={setSort}
                     currentSort={sort}
@@ -125,6 +121,7 @@ function App() {
               {data?.pages.flatMap((page, pageIndex) =>
                 page.products.map((product) => (
                   <ProductCard
+                    updateParams={updateParams}
                     key={`${pageIndex}-${product.id}`}
                     details={product}
                   />

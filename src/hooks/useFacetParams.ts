@@ -20,10 +20,13 @@ export const useFacetParams = (facets: Facet[]) => {
     const currentValues = query[identifier] || [];
     const encodedValue = encodeFacet(value);
 
-    const addValue = (values: (string | null)[], newValue: string) => [
-      ...values,
-      newValue,
-    ];
+    const addValue = (values: (string | null)[], newValue: string) => {
+      if (values.includes(newValue)) {
+        return values;
+      }
+
+      return [...values, newValue];
+    };
 
     const removeValue = (values: (string | null)[], valueToRemove: string) =>
       values.filter((item) => item !== valueToRemove);

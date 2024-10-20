@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { valueRangeSchema, valueRangeArraySchema } from '../schemas/facets';
 import { Facet, FacetValue } from '../types/listings';
 import { LayoutGroup, motion } from 'framer-motion';
-import { TbArrowDown, TbArrowUp, TbX } from 'react-icons/tb';
+import { TbArrowDown, TbArrowUp, TbCheck, TbX } from 'react-icons/tb';
 import { UseFacetParamsReturn } from '../types/query';
 
 type FacetCardProps = {
@@ -89,16 +89,22 @@ export const FacetCard = ({
               <div
                 key={option.displayValue}
                 className="text-xl flex flex-row gap-3 items-center">
-                <input
-                  type="checkbox"
-                  className="appearance-none w-7 h-7 rounded-full bg-gray-100 checked:bg-blue-100 hover:bg-blue-100 checked:border-transparent focus:outline-none aspect-square"
-                  id={option.identifier}
-                  name={option.displayValue}
-                  checked={isChecked(option.value)}
-                  onChange={(e) =>
-                    updateParams(identifier, option.value, e.target.checked)
-                  }
-                />
+                <div className="relative inline-flex items-center justify-center">
+                  <input
+                    type="checkbox"
+                    className="appearance-none w-7 h-7 rounded-full bg-gray-100 checked:bg-blue-100 hover:bg-blue-100 checked:border-transparent focus:outline-none"
+                    id={option.identifier}
+                    name={option.displayValue}
+                    checked={isChecked(option.value)}
+                    onChange={(e) =>
+                      updateParams(identifier, option.value, e.target.checked)
+                    }
+                  />
+                  {isChecked(option.value) && (
+                    <TbCheck className="absolute text-black pointer-events-none text-2xl" />
+                  )}
+                </div>
+
                 <div className="flex justify-between w-full ">
                   {option.displayValue}
                   <span className="text-gray-400">{option.productCount}</span>

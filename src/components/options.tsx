@@ -55,7 +55,7 @@ type AppliedProps = {
 export const AppliedFacets = ({ clearParams, getAllValues }: AppliedProps) => {
   return (
     <div className="bg-red-500">
-      <h1 className="pb-5">DEBUG</h1>
+      <h1 className="pb-5">FACET QUERYSTRING</h1>
       {JSON.stringify(getAllValues())}
     </div>
   );

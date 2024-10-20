@@ -1,8 +1,14 @@
 import { TbCheck, TbStarFilled, TbX } from 'react-icons/tb';
 import type { Product } from '../types/listings';
 import { motion } from 'framer-motion';
+import { UseFacetParamsReturn } from '../types/query';
 
-export const ProductCard = ({ details }: { details: Product }) => {
+type ProductCardProps = {
+  details: Product;
+  updateParams: UseFacetParamsReturn['updateParams'];
+};
+
+export const ProductCard = ({ details, updateParams }: ProductCardProps) => {
   const formatPrice = new Intl.NumberFormat('en-GB', {
     style: 'currency',
     currency: details.price.currencyCode,
@@ -12,8 +18,6 @@ export const ProductCard = ({ details }: { details: Product }) => {
 
   return (
     <motion.div
-      whileHover={{ scale: 1.05 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       key={details.id}
       className="bg-white p-2 rounded-2xl flex flex-col gap-4 justify-between overflow-hidden">
       <div className="relative w-full">
@@ -24,11 +28,16 @@ export const ProductCard = ({ details }: { details: Product }) => {
         />
         <div className="absolute top-0 left-0 right-0 p-2 flex justify-end items-start">
           <div>
-            <img
-              src={details.brand.brandImage?.url}
-              alt={details.brand.name}
-              className="w-20 shrink object-contain rounded-md"
-            />
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              onClick={() => updateParams('brands', details.brand.name, true)}>
+              <img
+                src={details.brand.brandImage?.url}
+                alt={details.brand.name}
+                className="w-20 shrink object-contain rounded-md"
+              />
+            </motion.button>
           </div>
         </div>
       </div>

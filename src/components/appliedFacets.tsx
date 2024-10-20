@@ -39,7 +39,7 @@ export const AppliedFacets = ({
       </motion.div>
 
       {appliedFacets.map((facet) =>
-        facet.values.map((facetOption) => (
+        facet.selectedOptions.map((facetOption) => (
           <motion.div
             className="flex flex-row items-center"
             key={facetOption?.displayValue}>

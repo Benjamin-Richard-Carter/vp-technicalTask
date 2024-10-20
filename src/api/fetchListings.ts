@@ -33,7 +33,7 @@ export const fetchListings: fetchListings = async (URI, params) => {
   });
 
   if (!response.ok) {
-    throw response;
+    throw response.status;
   }
 
   return response.json();

@@ -10,6 +10,7 @@ import { useLocation } from 'react-router-dom';
 import { LayoutGroup } from 'framer-motion';
 import { SortOptions } from './components/options';
 import { AppliedFacets } from './components/appliedFacets';
+import { ErrorDialog } from './components/error';
 
 const apiKey = import.meta.env.VITE_APIKEY;
 const url = `https://spanishinquisition.victorianplumbing.co.uk/interviews/listings?apikey=${apiKey}`;
@@ -47,6 +48,7 @@ function App() {
         return nextFrom < lastPage.pagination.total ? pages.length : undefined;
       },
       keepPreviousData: true,
+      retry: false,
     }
   );
 
@@ -86,10 +88,10 @@ function App() {
 
   if (error) {
     return (
-      <div>
-        Error: {error.message}
-        <button onClick={() => refetch()}>Retry</button>
-      </div>
+      <ErrorDialog
+        error={error}
+        refetch={refetch}
+      />
     );
   }
 

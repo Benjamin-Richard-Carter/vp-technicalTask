@@ -69,40 +69,30 @@ export const useFacetParams = (facets: Facet[]) => {
         );
       });
 
-      return { facet, values: facetOptionArray };
+      return { facet, selectedOptions: facetOptionArray };
     });
 
     return activeValues.filter((v) => v !== null);
   };
 
   const getQueryValues = (): queryParams['facets'] => {
-    const activeCategories = Object.entries(query).filter(
-      ([, value]) => value !== undefined
-    );
+    const activeFacets = getAllFacetValues();
+    const queryValues = activeFacets.reduce((acc, facet) => {
+      const identifier = facet.facet?.identifier;
 
-    const activeKeys = activeCategories.map(([key]) => key);
-    const activeValues = activeKeys.map((item) => {
-      const facet = facets.find((facet) => facet.identifier === item);
+      if (!identifier) return acc;
 
-      if (!facet) return null;
+      (acc ?? {})[identifier] = facet.selectedOptions
+        .filter((item) => item !== null && item !== undefined)
+        .map((item) => ({
+          identifier: item.identifier,
+          value: item.value,
+        }));
 
-      const decodedValues = query[item]
-        ?.map(decodeFacet)
-        .filter((v) => v !== null);
+      return acc ?? {};
+    }, {} as queryParams['facets']);
 
-      if (!decodedValues) return null;
-
-      return {
-        [facet.identifier]: decodedValues.map((v) => ({
-          identifier: facet.options.find(
-            (o) => JSON.stringify(o.value) === JSON.stringify(v)
-          )?.identifier,
-          value: v,
-        })),
-      };
-    });
-
-    return Object.assign({}, ...activeValues);
+    return queryValues;
   };
 
   const clearAllFacetValues = () => {

@@ -6,7 +6,7 @@ import { ProductCard } from './components/product';
 import { FacetCard } from './components/facet';
 import { useFacetParams } from './hooks/useFacetParams';
 import { useInView } from 'react-intersection-observer';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { LayoutGroup } from 'framer-motion';
 import { SortOptions } from './components/options';
 import { AppliedFacets } from './components/appliedFacets';
@@ -14,13 +14,10 @@ import { ErrorDialog } from './components/error';
 
 function App() {
   const { ref, inView } = useInView();
-
   const [appliedFacets, setAppliedFacets] = useState<queryParams['facets']>();
-  const location = useLocation();
   const queryClient = useQueryClient();
   const [sort, setSort] = useState<number>(1);
   const { apiKey } = useParams();
-
   const url = `https://spanishinquisition.victorianplumbing.co.uk/interviews/listings?apikey=${apiKey}`;
   const pageSlug = 'toilets';
 
@@ -65,11 +62,6 @@ function App() {
   };
 
   useEffect(() => {
-    setAppliedFacets(getQueryValues());
-    resetPageCount();
-  }, [location]);
-
-  useEffect(() => {
     if (inView && hasNextPage) {
       fetchNextPage();
     }
@@ -85,7 +77,13 @@ function App() {
     getQueryValues,
     clearAllFacetValues,
     getAllFacetValues,
+    query,
   } = useFacetParams(facets);
+
+  useEffect(() => {
+    setAppliedFacets(getQueryValues());
+    resetPageCount();
+  }, [query]);
 
   if (error) {
     return (

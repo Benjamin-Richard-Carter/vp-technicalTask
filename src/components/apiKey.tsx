@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 export const EnterApiKey = () => {
   const navigate = useNavigate();
-
   const [inputValue, setInputValue] = useState<string>('');
 
   return (

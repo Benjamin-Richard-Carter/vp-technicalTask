@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { valueRangeSchema, valueRangeArraySchema } from '../schemas/facets';
 import { Facet, FacetValue } from '../types/listings';
 import { LayoutGroup, motion } from 'framer-motion';
-import { TbArrowDown, TbArrowUp, TbCheck, TbX } from 'react-icons/tb';
+import { TbArrowDown, TbArrowUp, TbCheck } from 'react-icons/tb';
 import { UseFacetParamsReturn } from '../types/query';
 
 type FacetCardProps = {

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { TbArrowDown, TbArrowUp, TbSparkles, TbX } from 'react-icons/tb';
+import { TbArrowDown, TbArrowUp, TbSparkles } from 'react-icons/tb';
 import { MdOutlineDiscount } from 'react-icons/md';
 
 type OptionsProps = {

@@ -6,27 +6,27 @@ import { ProductCard } from './components/product';
 import { FacetCard } from './components/facet';
 import { useFacetParams } from './hooks/useFacetParams';
 import { useInView } from 'react-intersection-observer';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { LayoutGroup } from 'framer-motion';
 import { SortOptions } from './components/options';
 import { AppliedFacets } from './components/appliedFacets';
 import { ErrorDialog } from './components/error';
 
-const apiKey = import.meta.env.VITE_APIKEY;
-const url = `https://spanishinquisition.victorianplumbing.co.uk/interviews/listings?apikey=${apiKey}`;
-
 function App() {
   const { ref, inView } = useInView();
-  const pageSlug = 'toilets';
-  const size: number = 10;
+
   const [appliedFacets, setAppliedFacets] = useState<queryParams['facets']>();
   const location = useLocation();
   const queryClient = useQueryClient();
   const [sort, setSort] = useState<number>(1);
+  const { apiKey } = useParams();
+
+  const url = `https://spanishinquisition.victorianplumbing.co.uk/interviews/listings?apikey=${apiKey}`;
+  const pageSlug = 'toilets';
 
   const queryParams = {
     page_slug: pageSlug,
-    size,
+    size: 10,
     sort: sort,
     facets: appliedFacets,
   };

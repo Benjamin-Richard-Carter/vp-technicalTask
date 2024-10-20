@@ -53,6 +53,28 @@ export const useFacetParams = (facets: Facet[]) => {
   const getFacetValues = (identifier: string): (FacetValue | null)[] =>
     query[identifier]?.map(decodeFacet) ?? [];
 
+  const getAllFacetValues = () => {
+    const queryArray = Object.entries(query);
+    const activeCategories = queryArray.filter(
+      ([, value]) => value !== undefined
+    );
+
+    const activeValues = activeCategories.map(([key]) => {
+      const facet = facets.find((facet) => facet.identifier === key);
+      const facetOptionArray = getFacetValues(key).map((value) => {
+        if (!facet) return null;
+
+        return facet.options.find(
+          (o) => JSON.stringify(o.value) === JSON.stringify(value)
+        );
+      });
+
+      return { facet, values: facetOptionArray };
+    });
+
+    return activeValues.filter((v) => v !== null);
+  };
+
   const getQueryValues = (): queryParams['facets'] => {
     const activeCategories = Object.entries(query).filter(
       ([, value]) => value !== undefined
@@ -84,7 +106,10 @@ export const useFacetParams = (facets: Facet[]) => {
   };
 
   const clearAllFacetValues = () => {
-    setQuery({});
+    const clearedQuery = Object.fromEntries(
+      Object.keys(query).map((key) => [key, undefined])
+    );
+    setQuery(clearedQuery);
   };
 
   return {
@@ -93,6 +118,7 @@ export const useFacetParams = (facets: Facet[]) => {
     getFacetValues,
     getQueryValues,
     clearAllFacetValues,
+    getAllFacetValues,
   };
 };
 

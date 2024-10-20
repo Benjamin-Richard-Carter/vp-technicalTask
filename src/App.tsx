@@ -8,7 +8,8 @@ import { useFacetParams } from './hooks/useFacetParams';
 import { useInView } from 'react-intersection-observer';
 import { useLocation } from 'react-router-dom';
 import { LayoutGroup } from 'framer-motion';
-import { AppliedFacets, SortOptions } from './components/options';
+import { SortOptions } from './components/options';
+import { AppliedFacets } from './components/appliedFacets';
 
 const apiKey = import.meta.env.VITE_APIKEY;
 const url = `https://spanishinquisition.victorianplumbing.co.uk/interviews/listings?apikey=${apiKey}`;
@@ -80,6 +81,7 @@ function App() {
     getFacetValues,
     getQueryValues,
     clearAllFacetValues,
+    getAllFacetValues,
   } = useFacetParams(facets);
 
   if (error) {
@@ -103,6 +105,12 @@ function App() {
                     setSort={setSort}
                     currentSort={sort}
                   />
+                  <AppliedFacets
+                    getAllFacetValues={getAllFacetValues}
+                    clearAllFacetValues={clearAllFacetValues}
+                    updateParams={updateParams}
+                  />
+
                   {facets.map((facet) => (
                     <FacetCard
                       key={facet.identifier}

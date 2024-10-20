@@ -14,7 +14,6 @@ type FacetCardProps = {
 
 export const FacetCard = ({
   facet,
-  clearParams,
   getFacetValues,
   updateParams,
 }: FacetCardProps) => {
@@ -46,13 +45,6 @@ export const FacetCard = ({
     }
   };
 
-  const isAnyChecked = () => {
-    if (!facetValues) {
-      return false;
-    }
-    return facetValues.length > 0;
-  };
-
   return (
     <LayoutGroup>
       <motion.div
@@ -69,12 +61,6 @@ export const FacetCard = ({
           </h2>
 
           <span className="flex justify-center items-center text-2xl font-bold gap-3">
-            {isAnyChecked() && (
-              <button onClick={() => clearParams(identifier)}>
-                <TbX />
-              </button>
-            )}
-
             <button onClick={() => setIsOpen(!isOpen)}>
               {isOpen ? <TbArrowUp /> : <TbArrowDown />}
             </button>
@@ -107,6 +93,7 @@ export const FacetCard = ({
 
                 <div className="flex justify-between w-full ">
                   {option.displayValue}
+
                   <span className="text-gray-400">{option.productCount}</span>
                 </div>
               </div>

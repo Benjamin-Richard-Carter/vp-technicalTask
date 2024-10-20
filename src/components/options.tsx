@@ -5,9 +5,14 @@ import { MdOutlineDiscount } from 'react-icons/md';
 type OptionsProps = {
   setSort: (sort: number) => void;
   currentSort: number;
+  totalProducts: number;
 };
 
-export const SortOptions = ({ setSort, currentSort }: OptionsProps) => {
+export const SortOptions = ({
+  setSort,
+  currentSort,
+  totalProducts,
+}: OptionsProps) => {
   type SortType = {
     name: string;
     value: number;
@@ -22,7 +27,10 @@ export const SortOptions = ({ setSort, currentSort }: OptionsProps) => {
   ];
 
   return (
-    <motion.div className="p-3 bg-white rounded-2xl">
+    <motion.div className="p-3 bg-white rounded-2xl flex flex-col gap-1">
+      <h2 className="text-xl font-semibold p-2 rounded-2xl w-full px-2 ">
+        {totalProducts} Results
+      </h2>
       {sortTypes.map((sort) => (
         <motion.button
           key={sort.value}

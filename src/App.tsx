@@ -76,6 +76,7 @@ function App() {
   }, [inView, fetchNextPage, hasNextPage]);
 
   const facets = data?.pages[0]?.facets || [];
+  const totalProducts = data?.pages[0]?.pagination.total || 0;
 
   const {
     updateParams,
@@ -106,6 +107,7 @@ function App() {
                   <SortOptions
                     setSort={setSort}
                     currentSort={sort}
+                    totalProducts={totalProducts}
                   />
                   <AppliedFacets
                     getAllFacetValues={getAllFacetValues}
